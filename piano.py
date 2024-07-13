@@ -114,6 +114,7 @@ class PianoKey:
         self.color_unpressed = color_unpressed
         self.color_pressed = note_attribute_getter(key_colors)
         self.current_color = color_unpressed
+        self.octave = str(octave)
         self.sound = note_attribute_getter(piano_octaves[octave])
         self.letter = note_attribute_getter(key_labels)
         self.label_color = note_attribute_getter(key_label_colors)
@@ -131,8 +132,9 @@ class PianoKey:
         circle_loc_y = self.rect.y  + self.rect.size[1] - self.rect.size[0]//2
         pygame.draw.circle(screen, (0,0,0)           , (circle_loc_x, circle_loc_y), 22)
         pygame.draw.circle(screen, self.color_pressed, (circle_loc_x, circle_loc_y), 20)
-        text = pygame.font.Font(None, 36).render(self.letter, 1, self.label_color)
-        screen.blit(text, (circle_loc_x-9, circle_loc_y-10))
+
+        text = pygame.font.Font(None, 36).render(self.letter+self.octave, 1, self.label_color)
+        screen.blit(text, (circle_loc_x-15, circle_loc_y-10))
 
     def partially_draw_border(self, screen):
         pygame.draw.rect(screen, (0,0,0), self.border_rect)
