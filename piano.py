@@ -27,13 +27,6 @@ def game_loop(screen):
             for event in pygame.event.get():
                 handle_piano_keypress(event, screen, visible_piano_black_keys, visible_piano_white_keys, visible_piano_keys)
                 first_visible_key_absolute_index, piano_keys_are_actual = handle_octave_change(event, first_visible_key_absolute_index, piano_keys_are_actual)
-                # if event.type == pygame.KEYDOWN:
-                #     if event.key == pygame.K_LEFT:
-                #         first_visible_key_absolute_index = max(5, first_visible_key_absolute_index - 1)
-                #         piano_keys_are_actual = False
-                #     if event.key == pygame.K_RIGHT:
-                #         first_visible_key_absolute_index = min(7*len(piano_octaves)-len(visible_piano_white_keys_keyboard_keys)-6, first_visible_key_absolute_index + 1)
-                #         piano_keys_are_actual = False
                 if event.type == pygame.QUIT: 
                     running = False
 
@@ -69,14 +62,17 @@ def draw_piano_keys(screen, visible_piano_black_keys, visible_piano_white_keys):
 
 def handle_octave_change(event, first_visible_key_absolute_index, piano_keys_are_actual):
     if event.type == pygame.KEYDOWN:
-        piano_keys_are_actual = False
         if event.key == pygame.K_LEFT:
+            piano_keys_are_actual = False
             first_visible_key_absolute_index = max(5, first_visible_key_absolute_index - 1)
         if event.key == pygame.K_RIGHT:
+            piano_keys_are_actual = False
             first_visible_key_absolute_index = min(7*len(piano_octaves)-len(visible_piano_white_keys_keyboard_keys)-6, first_visible_key_absolute_index + 1)
         if event.key == pygame.K_DOWN:
+            piano_keys_are_actual = False
             first_visible_key_absolute_index = first_visible_key_absolute_index if first_visible_key_absolute_index - 7 < 5 else first_visible_key_absolute_index - 7
         if event.key == pygame.K_UP:
+            piano_keys_are_actual = False
             first_visible_key_absolute_index = first_visible_key_absolute_index if first_visible_key_absolute_index + 7 > 7*len(piano_octaves)-len(visible_piano_white_keys_keyboard_keys)-6 else first_visible_key_absolute_index + 7
     return first_visible_key_absolute_index, piano_keys_are_actual
 
