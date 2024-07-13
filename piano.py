@@ -13,7 +13,7 @@ def main():
 
 def game_loop(screen):
     running = True
-    first_visible_key_absolute_index = 21
+    first_visible_key_absolute_index = 14
     while running:
         partially_clear(screen)
 
@@ -68,14 +68,16 @@ def draw_piano_keys(screen, visible_piano_black_keys, visible_piano_white_keys):
 
 def handle_piano_keypress(event, screen, visible_piano_black_keys, visible_piano_white_keys, visible_piano_keys):
     if event.type == pygame.KEYDOWN:
+        primary_key = get_primary_key(event.key)
         if event.key == pygame.K_ESCAPE:
             pygame.quit()
-        if event.key in visible_piano_keys:
-            visible_piano_keys[event.key].press()
+        if primary_key in visible_piano_keys:
+            visible_piano_keys[primary_key].press()
             draw_piano_keys(screen, visible_piano_black_keys, visible_piano_white_keys)
     if event.type == pygame.KEYUP:
-        if event.key in visible_piano_keys:
-            visible_piano_keys[event.key].unpress()
+        primary_key = get_primary_key(event.key)
+        if primary_key in visible_piano_keys:
+            visible_piano_keys[primary_key].unpress()
             draw_piano_keys(screen, visible_piano_black_keys, visible_piano_white_keys)
 
 
@@ -271,13 +273,13 @@ all_piano_black_keys = [
     key
     for octave in range(max_octave_non_inclusive)
         for key in [
-            GhostPianoKey(),
             BlackPianoKey(octave, lambda _: _.i),
             BlackPianoKey(octave, lambda _: _.x),
             GhostPianoKey(),
             BlackPianoKey(octave, lambda _: _.q),
             BlackPianoKey(octave, lambda _: _.r),
             BlackPianoKey(octave, lambda _: _.b),
+            GhostPianoKey(),
         ]
 ]
 
@@ -296,23 +298,48 @@ all_piano_white_keys = [
 ]
 
 visible_piano_black_keys_keyboard_keys = [
+    pygame.K_CAPSLOCK,
+    pygame.K_a, pygame.K_s, pygame.K_d, pygame.K_f, pygame.K_g,
     pygame.K_BACKQUOTE,
     pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5,
     pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9, pygame.K_0,
-    pygame.K_MINUS, pygame.K_EQUALS, pygame.K_BACKSPACE, pygame.K_QUOTE, pygame.K_RETURN,
+    pygame.K_MINUS, pygame.K_EQUALS, pygame.K_BACKSPACE,
 ]
 
 visible_piano_white_keys_keyboard_keys=[
+    pygame.K_LCTRL, pygame.K_LSHIFT,
+    pygame.K_z, pygame.K_x, pygame.K_c, pygame.K_v, pygame.K_b,
     pygame.K_TAB,
     pygame.K_q, pygame.K_w, pygame.K_e, pygame.K_r, pygame.K_t,
     pygame.K_y, pygame.K_u, pygame.K_i, pygame.K_o, pygame.K_p,
-    pygame.K_LEFTBRACKET, pygame.K_RIGHTBRACKET, pygame.K_BACKSLASH, pygame.K_RSHIFT,
+    pygame.K_LEFTBRACKET, pygame.K_RIGHTBRACKET, pygame.K_BACKSLASH
 ]
+
+extra_keys_to_primary = {
+    pygame.K_n: pygame.K_TAB,
+    pygame.K_m: pygame.K_q,
+    pygame.K_COMMA: pygame.K_w,
+    pygame.K_PERIOD: pygame.K_e,
+    pygame.K_SLASH: pygame.K_r,
+    pygame.K_RSHIFT: pygame.K_t,
+    pygame.K_PAGEDOWN: pygame.K_y,
+
+    pygame.K_h: pygame.K_BACKQUOTE,
+    pygame.K_j: pygame.K_1,
+    pygame.K_k: pygame.K_2,
+    pygame.K_l: pygame.K_3,
+    pygame.K_SEMICOLON: pygame.K_4,
+    pygame.K_QUOTE: pygame.K_5,
+    pygame.K_RETURN: pygame.K_6,
+}
+
+def get_primary_key(key):
+    return extra_keys_to_primary.get(key, key)
 
 def create_visible_keys(first_visible_key_absolute_index):
     visible_piano_black_keys = {
         keyboard_key : piano_key(leftmost_key_loc + 60 + white_key_width*index)
-        for keyboard_key, piano_key, index in zip(visible_piano_black_keys_keyboard_keys, all_piano_black_keys[first_visible_key_absolute_index:], range(-1, len(visible_piano_black_keys_keyboard_keys)))
+        for keyboard_key, piano_key, index in zip(visible_piano_black_keys_keyboard_keys, all_piano_black_keys[first_visible_key_absolute_index:], range(len(visible_piano_black_keys_keyboard_keys)))
     }
 
     visible_piano_white_keys = {
